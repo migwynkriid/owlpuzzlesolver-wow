@@ -5,7 +5,7 @@ HTML based solver for the Glazer's Owl Puzzle in the Vault of the Wardens, intro
 ## Description
 This tool aims to assist players in solving the owl statue puzzle
 
-![Owl Puzzle Screenshot](./tool.png)
+![Owl Puzzle Screenshot](./pictures/tool.png)
 
 ## Usage
 Download the zipped file and unzip it. Open the index.html file in your browser to start solving the puzzle.

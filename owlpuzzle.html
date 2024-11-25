@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <link rel="icon" type="image/jpeg" href="./pictures/favicon.jpg">
     <title>Vault of Wardens: Glazer's Owl Puzzle</title>
     <style>
         @font-face {
             font-family: 'CustomFont';
-            src: url('font.ttf') format('truetype');
+            src: url('./font/font.ttf') format('truetype');
         }
 
         * {
@@ -24,7 +24,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: url('background.png') no-repeat center center fixed;
+            background: url('./pictures/background.png') no-repeat center center fixed;
             background-size: cover;
             position: relative;
         }
@@ -159,7 +159,7 @@
         }
 
         .square.visual-mode {
-            background-image: url('tile.png');
+            background-image: url('./pictures/tile.png');
             background-size: 100% 100%;  
             background-position: center;
             background-repeat: no-repeat;
@@ -183,7 +183,7 @@
         .square.visual-mode.selected::after,
         .square.visual-mode.configured::after,
         .square.visual-mode.flip-target::after {
-            background-image: url('placed.png');
+            background-image: url('./pictures/placed.png');
         }
 
         .square.visual-mode.center-square {
@@ -501,7 +501,7 @@
                         <div class="button-group">
                             <button class="button outline" id="resetButton">Reset All Statues</button>
                             <button class="button outline button-with-icon" id="copyButton">
-                                Copy <img src="copy.png" alt="Copy" class="button-icon">
+                                Copy <img src="./pictures/copy.png" alt="Copy" class="button-icon">
                             </button>
                         </div>
 
