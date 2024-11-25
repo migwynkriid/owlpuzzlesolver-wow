@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <title>Vault of Wardens: Glazer's Owl Puzzle</title>
+    <style>
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('font.ttf') format('truetype');
+        }
+
+        * {
+            font-family: 'CustomFont', sans-serif;
+        }
+
+        /* Keep monospace for the textarea */
+        textarea {
+            font-family: monospace;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+        .container {
+            display: flex;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .faq-section {
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 15px;
+            background: #fff;
+        }
+
+        .faq-section h3 {
+            margin: 0 0 10px 0;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .faq-section ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .faq-section li {
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .faq-section li:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-section a {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+
+        .faq-section a:hover {
+            color: #2563eb;
+        }
+
+        .card {
+            max-width: none;
+            margin: 0;
+        }
+
+        .faq-textarea {
+            width: 100%;
+            height: 400px;
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: sans-serif;
+            resize: vertical;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 75px);
+            gap: 10px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9fafb;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .square {
+            width: 75px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 16px;
+        }
+
+        .square:hover {
+            background-color: #f3f4f6;
+        }
+
+        .square.selected {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .square.configured {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .square.flip-target {
+            background-color: #bbf7d0;
+        }
+
+        .square.initial-state {
+            background-color: #8b5cf6;
+            color: white;
+        }
+
+        .square.visual-mode {
+            background-image: url('tile.png');
+            background-size: 100% 100%;  
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none;
+            position: relative;
+        }
+
+        .square.visual-mode::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 100% 100%;  
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+
+        .square.visual-mode.selected::after,
+        .square.visual-mode.configured::after,
+        .square.visual-mode.flip-target::after {
+            background-image: url('placed.png');
+        }
+
+        .square.visual-mode.center-square {
+            border: none;
+        }
+
+        .square.visual-mode.selected {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .square.visual-mode.configured {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .square.visual-mode.flip-target {
+            background-color: #bbf7d0;
+        }
+
+        .square.visual-mode.initial-state {
+            background-color: #8b5cf6;
+            color: white;
+        }
+
+        .center-square {
+            border: 2.5px solid #6b7280;
+        }
+
+        .square.visual-mode.center-square {
+            border: none;
+        }
+
+        .alert {
+            background-color: #f3f4f6;
+            border: 1.25px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert p {
+            margin: 0.5rem 0;
+        }
+
+        .alert button {
+            margin-top: 0.5rem;
+        }
+
+        .alert.error {
+            background-color: #ffebee;
+            border: 1.25px solid #ef5350;
+            color: #c62828;
+        }
+
+        .alert.success {
+            background-color: #f1f8e9;
+            border: 2.5px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .alert.success strong {
+            font-weight: bold;
+        }
+
+        .button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #3b82f6;
+            color: white;
+            cursor: pointer;
+            margin: 4px;
+        }
+
+        .button:hover {
+            background-color: #2563eb;
+        }
+
+        .button.outline {
+            background-color: transparent;
+            border: 1.25px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        #resetButton:hover {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        #copyButton:hover {
+            background-color: #93c5fd;
+            border-color: #93c5fd;
+            color: white;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            font-family: monospace;
+            margin: 8px 0;
+            padding: 8px;
+        }
+
+        .space-y-4 > * {
+            margin-bottom: 16px;
+        }
+
+        .dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .dialog-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .mapping-section {
+            border: 1.25px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        .mapping-section p {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .mapping-section textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 1.25px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: monospace;
+            box-sizing: border-box;
+        }
+
+        .config-section {
+            border: 1.25px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .config-section p {
+            margin: 5px 0;
+        }
+
+        .faq-button {
+            display: none;
+        }
+
+        #faqModal {
+            display: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .close-button:hover {
+            background: #f3f4f6;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .title-section h1 {
+            margin: 0;
+            flex: 1;
+        }
+
+        #placeholderBtn {
+            padding: 8px 16px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #placeholderBtn:hover {
+            background-color: #2563eb;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .button-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .button-icon {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="title-section">
+                <h1>Glazer's Owl Puzzle</h1>
+                <button id="placeholderBtn">Switch to Pictures</button>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <div id="flipDialog" class="dialog" style="display: none;">
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid" id="puzzleGrid"></div>
+
+                        <div id="configureAlert" class="alert">
+                            Select the 4 statues that change when the owl statue is clicked. Once mapped, click "Next Step."
+                        </div>
+
+                        <div id="settingFlipsAlert" class="alert" style="display: none;">
+                            <div>
+                                Select the 4 statues that gets changed when owl statue <span id="currentSquareNum"></span> is clicked.
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                Selected: <span id="flipCount">0</span>/4
+                            </div>
+                            <button class="button" id="doneButton">Done</button>
+                        </div>
+
+                        <div id="initialStateAlert" class="alert" style="display: none;">
+                            <p>Select the current active owl statues</p>
+                            <button class="button" id="solveButton">Solve Puzzle</button>
+                        </div>
+
+                        <button id="nextStepButton" class="button" style="display: none;">Next Step</button>
+
+                        <div class="mapping-section">
+                            <p><strong>Owl Statue Mapping:</strong></p>
+                            <textarea id="flipMapText" oninput="handleFlipMapInput(this.value)"></textarea>
+                        </div>
+
+                        <div id="activeStatuesSection" style="display: none;">
+                            <p><strong>Current Active Owl Statues:</strong></p>
+                            <pre id="activeStatues" style="white-space: pre-wrap; border: 1.25px solid #ccc; padding: 10px; margin-top: 5px;"></pre>
+                        </div>
+
+                        <div id="errorAlert" class="alert error" style="display: none;"></div>
+                        <div id="solutionAlert" class="alert" style="display: none;"></div>
+
+                        <div class="button-group">
+                            <button class="button outline" id="resetButton">Reset All Statues</button>
+                            <button class="button outline button-with-icon" id="copyButton">
+                                Copy <img src="copy.png" alt="Copy" class="button-icon">
+                            </button>
+                        </div>
+
+                        <script>
+                            function copyMapping() {
+                                const mappingText = document.getElementById('flipMapText').value;
+                                navigator.clipboard.writeText(mappingText).then(() => {
+                                    const copyBtn = document.getElementById('copyButton');
+                                    const originalText = copyBtn.innerHTML;
+                                    copyBtn.textContent = 'Copied!';
+                                    setTimeout(() => {
+                                        copyBtn.innerHTML = originalText;
+                                    }, 2000);
+                                });
+                            }
+
+                            document.getElementById('copyButton').onclick = copyMapping;
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="faq-section">
+            <h3>How to Use</h3>
+                <li>Click on each owl statue to configure which other statues it affects when clicked (up to 4).</li>
+                <li>After configuring all statues, click "Next Step".</li>
+                <li>Select which owl statues are currently active (lit up).</li>
+                <li>Click "Solve Puzzle" to find the solution.</li>
+                <li>The orientation does not matter.</li>
+            <h3>Need help?</h3>
+                <li>Join the WoW Secret Hunting Discord server by <a href="https://discord.com/invite/wowsecrets" target="_blank">clicking here</a>.</li>
+        </div>
+    </div>
+
+    <div class="dialog-backdrop" id="dialogBackdrop"></div>
+    <div class="dialog" id="resetDialog">
+        <h3>Reset Square Configuration</h3>
+        <p>This square already has flip connections set. Would you like to reset and reconfigure it?</p>
+        <div>
+            <button class="button outline" id="cancelReset">Cancel</button>
+            <button class="button" id="confirmReset">Reset Square</button>
+        </div>
+    </div>
+
+    <script>
+        let activeSquares = new Set();
+        let flipMap = {};
+        let currentSquare = null;
+        let isSettingFlips = false;
+        let solution = null;
+        let showInitialStateSelection = false;
+        let initialState = new Set();
+        let currentFlipsCount = 0;
+        let allSquaresConfigured = false;
+        let gridType = 'gridnumbers'; // Can be 'gridnumbers' or 'gridpictures'
+
+        // Initialize the grid
+        function initializeGrid() {
+            const grid = document.getElementById('puzzleGrid');
+            for (let i = 0; i < 25; i++) {
+                const square = document.createElement('div');
+                square.className = 'square';
+                if (i === 12) square.classList.add('center-square');
+                square.textContent = i + 1;
+                if (gridType === 'gridpictures') {
+                    square.classList.add('visual-mode');
+                    square.style.color = 'transparent';
+                }
+                square.onclick = () => handleSquareClick(i);
+                grid.appendChild(square);
+            }
+            updateUI();
+        }
+
+        function handleSquareClick(index) {
+            if (showInitialStateSelection) {
+                if (initialState.has(index + 1)) {
+                    initialState.delete(index + 1);
+                } else {
+                    initialState.add(index + 1);
+                }
+                updateUI();
+                return;
+            }
+
+            if (!isSettingFlips) {
+                if (flipMap[index + 1] && flipMap[index + 1].length > 0) {
+                    showResetDialog(index);
+                    return;
+                }
+                currentSquare = index;
+                isSettingFlips = true;
+                currentFlipsCount = 0;
+                flipMap[currentSquare + 1] = [];
+                updateUI();
+                return;
+            }
+
+            if (currentSquare !== null && index !== currentSquare) {
+                const currentFlips = flipMap[currentSquare + 1] || [];
+                const targetSquare = index + 1;
+                
+                if (currentFlips.includes(targetSquare)) {
+                    flipMap[currentSquare + 1] = currentFlips.filter(x => x !== targetSquare);
+                    currentFlipsCount--;
+                } else if (currentFlipsCount < 4) {
+                    flipMap[currentSquare + 1] = [...currentFlips, targetSquare];
+                    currentFlipsCount++;
+                    
+                    if (currentFlipsCount === 4) {
+                        setTimeout(handleDoneSettingFlips, 0);
+                    }
+                }
+                updateUI();
+            }
+        }
+
+        function handleDoneSettingFlips() {
+            if (currentSquare !== null && flipMap[currentSquare + 1]) {
+                flipMap[currentSquare + 1].sort((a, b) => a - b);
+            }
+            
+            isSettingFlips = false;
+            currentSquare = null;
+            currentFlipsCount = 0;
+            
+            // Update the text field
+            const flipMapText = document.getElementById('flipMapText');
+            flipMapText.value = generateFlipMapText();
+            
+            updateUI();
+        }
+
+        function updateUI() {
+            // Update squares
+            const squares = document.querySelectorAll('.square');
+            squares.forEach((square, index) => {
+                square.className = 'square';
+                if (index === 12) square.classList.add('center-square');
+                
+                if (showInitialStateSelection && initialState.has(index + 1)) {
+                    square.classList.add('initial-state');
+                } else if (!showInitialStateSelection) {  
+                    if (currentSquare === index) {
+                        square.classList.add('selected');
+                    } else if (!isSettingFlips && flipMap[index + 1] && flipMap[index + 1].length > 0) {
+                        square.classList.add('configured');
+                    } else if (currentSquare !== null && 
+                             flipMap[currentSquare + 1] && flipMap[currentSquare + 1].includes(index + 1)) {
+                        square.classList.add('flip-target');
+                    }
+                }
+                
+                if (gridType === 'gridpictures') {
+                    square.classList.add('visual-mode');
+                    square.style.color = 'transparent';
+                } else {
+                    square.classList.remove('visual-mode');
+                    square.style.color = '';
+                }
+            });
+
+            // Check if all squares are configured
+            const allConfigured = Object.keys(flipMap).length === 25 && 
+                                Object.values(flipMap).every(flips => flips && flips.length > 0);
+
+            // Update alerts and buttons
+            document.getElementById('configureAlert').style.display = 
+                !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
+            document.getElementById('settingFlipsAlert').style.display = 
+                isSettingFlips ? 'block' : 'none';
+            document.getElementById('initialStateAlert').style.display = 
+                showInitialStateSelection ? 'block' : 'none';
+            document.getElementById('nextStepButton').style.display = 
+                allConfigured && !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
+
+            const settingFlipsAlert = document.getElementById('settingFlipsAlert');
+            if (isSettingFlips) {
+                settingFlipsAlert.querySelector('#currentSquareNum').textContent = currentSquare + 1;
+                settingFlipsAlert.querySelector('#flipCount').textContent = currentFlipsCount;
+                settingFlipsAlert.querySelector('#doneButton').style.display = 'block';
+            } else {
+                settingFlipsAlert.querySelector('#doneButton').style.display = 'none';
+            }
+
+            // Always update the flip map text unless it's being edited
+            const flipMapText = document.getElementById('flipMapText');
+            if (!flipMapText.matches(':focus')) {
+                flipMapText.value = generateFlipMapText();
+            }
+
+            document.getElementById('title').textContent = 
+                showInitialStateSelection ? 'Select Current Active Owl Statues' : 'Glazer Puzzle';
+        }
+
+        function getRemainingSquares() {
+            const remaining = [];
+            for (let i = 1; i <= 25; i++) {
+                if (!flipMap[i] || !flipMap[i].length) {
+                    remaining.push(i);
+                }
+            }
+            return remaining;
+        }
+
+        function generateFlipMapText() {
+            const entries = Object.entries(flipMap)
+                .filter(([_, flips]) => flips && flips.length > 0)
+                .map(([key, flips]) => `${key}: [${flips.join(', ')}]`)
+                .join('\n');
+            return entries || 'No flip connections set';
+        }
+
+        function flipPieces(state, piece) {
+            let newState = state;
+            // Flip the clicked piece
+            newState ^= (1 << (piece - 1));
+            // Flip all connected pieces
+            for (const p of flipMap[piece] || []) {
+                newState ^= (1 << (p - 1));
+            }
+            return newState;
+        }
+
+        function checkWin(state) {
+            return state === 0;
+        }
+
+        function solvePuzzle(initialState) {
+            const queue = [[initialState, []]];
+            const visited = new Set([initialState]);
+
+            while (queue.length > 0) {
+                const [currentState, moveSequence] = queue.shift();
+
+                if (checkWin(currentState)) {
+                    return moveSequence;
+                }
+
+                // Only try flipping pieces that are currently active
+                for (let i = 0; i < 25; i++) {
+                    if (currentState & (1 << i)) {
+                        const newState = flipPieces(currentState, i + 1);
+                        if (!visited.has(newState)) {
+                            visited.add(newState);
+                            queue.push([newState, [...moveSequence, i + 1]]);
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        function handleSolve() {
+            try {
+                if (initialState.size === 0) {
+                    showError("Select your current active owl statues.");
+                    return;
+                }
+
+                // Convert initial state to binary representation
+                let initialStateBits = 0;
+                for (const piece of initialState) {
+                    initialStateBits |= (1 << (piece - 1));
+                }
+                
+                console.log('Starting solve with:');
+                console.log('Initial active statues:', Array.from(initialState).sort((a, b) => a - b).join(', '));
+                console.log('Flip connections:');
+                Object.entries(flipMap).forEach(([piece, connections]) => {
+                    if (connections && connections.length > 0) {
+                        console.log(`${piece}: [${connections.join(', ')}]`);
+                    }
+                });
+                
+                solution = solvePuzzle(initialStateBits);
+                
+                if (solution) {
+                    const solutionText = `Solution found! Click owl statues in this order: ${solution.map(num => `<strong>${num}</strong>`).join(", ")}`;
+                    const solutionAlert = document.getElementById('solutionAlert');
+                    solutionAlert.innerHTML = solutionText;
+                    solutionAlert.style.display = 'block';
+                    solutionAlert.className = 'alert success';
+                    document.getElementById('errorAlert').style.display = 'none';
+                    console.log('Final solution:', solution);
+                } else {
+                    showError("No solution found for this configuration of statues. Please click on 'Remap' and check your mappings.");
+                }
+            } catch (err) {
+                console.error('Solver error:', err);
+                showError("Error solving puzzle: " + err.message);
+            }
+        }
+
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            if (message && message.trim()) {
+                errorAlert.textContent = message;
+                errorAlert.style.display = 'block';
+            } else {
+                errorAlert.style.display = 'none';
+            }
+        }
+
+        function showResetDialog(index) {
+            document.getElementById('dialogBackdrop').style.display = 'block';
+            document.getElementById('resetDialog').style.display = 'block';
+            document.getElementById('confirmReset').onclick = () => {
+                delete flipMap[index + 1];
+                currentSquare = index;
+                currentFlipsCount = 0;
+                isSettingFlips = true;
+                hideResetDialog();
+                updateUI();
+            };
+        }
+
+        function hideResetDialog() {
+            document.getElementById('dialogBackdrop').style.display = 'none';
+            document.getElementById('resetDialog').style.display = 'none';
+        }
+
+        function resetAll() {
+            activeSquares = new Set();
+            flipMap = {};
+            currentSquare = null;
+            isSettingFlips = false;
+            solution = null;
+            initialState = new Set();
+            showInitialStateSelection = false;
+            currentFlipsCount = 0;
+            allSquaresConfigured = false;
+            document.getElementById('errorAlert').style.display = 'none';
+            document.getElementById('solutionAlert').style.display = 'none';
+            updateUI();
+        }
+
+        function showFAQ() {
+            document.getElementById('faqModal').style.display = 'block';
+        }
+
+        function hideFAQ() {
+            document.getElementById('faqModal').style.display = 'none';
+        }
+
+        function handleFlipMapInput(text) {
+            if (!text.trim()) {
+                flipMap = {};
+                updateUI();
+                return;
+            }
+
+            const newFlipMap = {};
+            const lines = text.split('\n');
+            
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                
+                const [key, values] = line.split(':');
+                if (values) {
+                    const flips = values.trim()
+                        .replace('[', '')
+                        .replace(']', '')
+                        .split(',')
+                        .map(n => parseInt(n.trim()))
+                        .filter(n => !isNaN(n) && n >= 1 && n <= 25);
+                    
+                    if (flips.length > 0 && flips.length <= 4) {
+                        newFlipMap[parseInt(key.trim())] = flips;
+                    }
+                }
+            }
+            
+            flipMap = newFlipMap;
+            updateUI();
+        }
+
+        function handleNextStep() {
+            showInitialStateSelection = true;
+            updateUI();  // Make sure display is updated
+            document.getElementById('activeStatuesSection').style.display = 'block';
+        }
+
+        function toggleVisualMode() {
+            gridType = gridType === 'gridnumbers' ? 'gridpictures' : 'gridnumbers';
+            const squares = document.querySelectorAll('.square');
+            squares.forEach(square => {
+                if (gridType === 'gridpictures') {
+                    square.classList.add('visual-mode');
+                    square.style.color = 'transparent';
+                } else {
+                    square.classList.remove('visual-mode');
+                    square.style.color = '';
+                }
+            });
+            
+            // Update button text to reflect current mode
+            const visualButton = document.getElementById('placeholderBtn');
+            visualButton.textContent = gridType === 'gridnumbers' ? 'Switch to Pictures' : 'Switch to Numbers';
+        }
+
+        // Event Listeners
+        document.getElementById('doneButton').onclick = handleDoneSettingFlips;
+        document.getElementById('nextStepButton').onclick = handleNextStep;
+        document.getElementById('solveButton').onclick = handleSolve;
+        document.getElementById('resetButton').onclick = resetAll;
+        document.getElementById('cancelReset').onclick = hideResetDialog;
+        document.getElementById('placeholderBtn').onclick = toggleVisualMode;
+
+        // Initialize the puzzle
+        initializeGrid();
+    </script>
+</body>
+</html>
