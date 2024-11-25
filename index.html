@@ -59,17 +59,14 @@
 
         .faq-section {
             width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
             padding: 15px;
-            background: #fff;
+            background: transparent;
         }
 
         .faq-section h3 {
             margin: 0 0 10px 0;
             text-align: center;
             padding-bottom: 10px;
-            border-bottom: 1px solid #ccc;
         }
 
         .faq-section ol {
@@ -456,6 +453,23 @@
             right: 10px;
             z-index: 1000;
         }
+
+        .how-to-use-section, .help-section {
+            margin-bottom: 20px;
+            border: 2px solid #a9abaf;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .how-to-use-section h3, .help-section h3 {
+            margin-top: 0;
+        }
+
+        .how-to-use-section ul, .help-section ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -508,7 +522,9 @@
                         <div id="solutionAlert" class="alert" style="display: none;"></div>
 
                         <div class="button-group">
-                            <button class="button outline" id="resetButton">Reset All Statues</button>
+                            <button class="button outline button-with-icon" id="resetButton">
+                                Reset All Statues <img src="./pictures/x.png" alt="Reset" class="button-icon">
+                            </button>
                             <button class="button outline button-with-icon" id="copyButton">
                                 Copy <img src="./pictures/copy.png" alt="Copy" class="button-icon">
                             </button>
@@ -534,14 +550,22 @@
             </div>
         </div>
         <div class="faq-section">
-            <h3>How to Use</h3>
-                <li>Click on each owl statue to configure which other statues it affects when clicked (up to 4).</li>
-                <li>After configuring all statues, click "Next Step".</li>
-                <li>Select which owl statues are currently active (lit up).</li>
-                <li>Click "Solve Puzzle" to find the solution.</li>
-                <li>The orientation does not matter.</li>
-            <h3>Need help?</h3>
-                <li>Join the WoW Secret Hunting Discord server by <a href="https://discord.com/invite/wowsecrets" target="_blank">clicking here</a>.</li>
+            <div class="how-to-use-section">
+                <h3>How to Use</h3>
+                <ul>
+                    <li>Click on each owl statue to configure which other statues it affects when clicked (up to 4).</li>
+                    <li>After configuring all statues, click "Next Step".</li>
+                    <li>Select which owl statues are currently active (lit up).</li>
+                    <li>Click "Solve Puzzle" to find the solution.</li>
+                    <li>The orientation does not matter.</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h3>Need help?</h3>
+                <ul>
+                    <li>Join the WoW Secret Hunting Discord server by <a href="https://discord.com/invite/wowsecrets" target="_blank">clicking here</a>.</li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="hit-counter">
