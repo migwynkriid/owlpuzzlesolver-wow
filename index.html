@@ -268,6 +268,15 @@
             color: #3b82f6;
         }
 
+        .button.danger {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .button.danger:hover {
+            background-color: #b91c1c;
+        }
+
         #resetButton:hover {
             background-color: #ef4444;
             color: white;
@@ -574,11 +583,11 @@
 
     <div class="dialog-backdrop" id="dialogBackdrop"></div>
     <div class="dialog" id="resetDialog">
-        <h3>Reset Square Configuration</h3>
-        <p>This square already has flip connections set. Would you like to reset and reconfigure it?</p>
+        <h3>Remap Statue?</h3>
+        <p>This statue already has its connections set. Would you like to remap it?</p>
         <div>
             <button class="button outline" id="cancelReset">Cancel</button>
-            <button class="button" id="confirmReset">Reset Square</button>
+            <button class="button danger" id="confirmReset">Remap Statue</button>
         </div>
     </div>
 
