@@ -571,19 +571,18 @@
                         </div>
 
                         <div id="errorAlert" class="alert error" style="display: none;"></div>
-                        <div id="solutionAlert" class="alert" style="display: none;"></div>
 
                         <div class="button-group" style="display: flex; justify-content: space-between; width: 100%;">
                             <div style="display: flex; gap: 10px;">
                                 <button class="button outline button-with-icon" id="copyButton">
                                     Copy <img src="./pictures/copy.png" alt="Copy" class="button-icon">
                                 </button>
-                                <button class="button outline button-with-icon" id="debugImportButton" style="display: none;">
+                                <button class="button outline button-with-icon" id="debugImportButton">
                                     Debug Import Mapping <img src="./pictures/copy.png" alt="Debug" class="button-icon">
                                 </button>
                             </div>
                             <button class="button outline button-with-icon" id="resetButton">
-                                Reset All Statues <img src="./pictures/x.png" alt="Reset" class="button-icon">
+                                Reset<img src="./pictures/x.png" alt="Reset" class="button-icon">
                             </button>
                         </div>
 
@@ -983,11 +982,17 @@
                 solution = solvePuzzle(initialStateBits);
                 
                 if (solution) {
-                    const solutionText = `Solution found! Click owl statues in this order: ${solution.map(num => `<strong>${num}</strong>`).join(", ")}`;
-                    const solutionAlert = document.getElementById('solutionAlert');
-                    solutionAlert.innerHTML = solutionText;
-                    solutionAlert.style.display = 'block';
-                    solutionAlert.className = 'alert success';
+                    const solutionText = `Solution found! Click on the owl statues in this sequence: ${solution.map(num => `<strong>${num}</strong>`).join(", ")}`;
+                    
+                    // Update the instruction text with the solution and apply success styling
+                    const initialStateAlert = document.getElementById('initialStateAlert');
+                    const instructionText = initialStateAlert.querySelector('p');
+                    instructionText.innerHTML = solutionText;
+                    initialStateAlert.className = 'alert success';
+                    
+                    // Hide the solve button
+                    document.getElementById('solveButton').style.display = 'none';
+                    
                     document.getElementById('errorAlert').style.display = 'none';
                     console.log('Final solution:', solution);
                 } else {
@@ -1037,8 +1042,19 @@
             showInitialStateSelection = false;
             currentFlipsCount = 0;
             allSquaresConfigured = false;
+            
+            // Clear error and reset UI elements
             document.getElementById('errorAlert').style.display = 'none';
-            document.getElementById('solutionAlert').style.display = 'none';
+            document.getElementById('flipMapText').value = '';
+            
+            // Reset instruction text and styling
+            const initialStateAlert = document.getElementById('initialStateAlert');
+            initialStateAlert.className = 'alert';
+            initialStateAlert.querySelector('p').textContent = 'Now highlight the currently active owl statues on the grid (Not in-game)';
+            
+            // Show solve button again
+            document.getElementById('solveButton').style.display = 'block';
+            
             updateUI();
         }
 
