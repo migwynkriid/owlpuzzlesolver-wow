@@ -534,7 +534,7 @@
 
                         <div id="initialStateAlert" class="alert" style="display: none;">
                             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                <p style="margin: 0;">Select the current active owl statues</p>
+                                <p style="margin: 0;">Now highlight the currently active owl statues on the grid (Not in-game)</p>
                                 <button class="button outline button-with-icon" id="solveButton">
                                     Solve Puzzle <img src="./pictures/solve.png" alt="Solve" class="button-icon">
                                 </button>
@@ -924,7 +924,7 @@
                     document.getElementById('errorAlert').style.display = 'none';
                     console.log('Final solution:', solution);
                 } else {
-                    showError("No solution found for this configuration of statues. Please click on 'Remap' and check your mappings.");
+                    showError("No solution found for this configuration of statues. Please check your mappings.");
                 }
             } catch (err) {
                 console.error('Solver error:', err);
