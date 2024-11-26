@@ -289,6 +289,18 @@
             color: white;
         }
 
+        #solveButton:hover {
+            background-color: #22c55e;
+            border-color: #22c55e;
+            color: white;
+        }
+
+        #doneButton:hover {
+            background-color: #22c55e;
+            border-color: #22c55e;
+            color: white;
+        }
+
         textarea {
             width: 100%;
             height: 120px;
@@ -509,20 +521,24 @@
                         </div>
 
                         <div id="settingFlipsAlert" class="alert" style="display: none;">
-                            <div>
-                                Select the 4 statues that gets changed when owl statue <span id="currentSquareNum"></span> is clicked.
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    Select the 4 statues that gets changed when owl statue <span id="currentSquareNum"></span> is clicked.
+                                    <span>Selected: <span id="flipCount">0</span>/4</span>
+                                </div>
+                                <button class="button outline button-with-icon" id="doneButton">
+                                    Done <img src="./pictures/checkmark.png" alt="Done" class="button-icon">
+                                </button>
                             </div>
-                            <div style="margin-top: 0.5rem;">
-                                Selected: <span id="flipCount">0</span>/4
-                            </div>
-                            <button class="button" id="doneButton">Done</button>
                         </div>
 
                         <div id="initialStateAlert" class="alert" style="display: none;">
-                            <p>Select the current active owl statues</p>
-                            <button class="button outline button-with-icon" id="solveButton">
-                                Solve Puzzle <img src="./pictures/copy.png" alt="Solve" class="button-icon">
-                            </button>
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <p style="margin: 0;">Select the current active owl statues</p>
+                                <button class="button outline button-with-icon" id="solveButton">
+                                    Solve Puzzle <img src="./pictures/solve.png" alt="Solve" class="button-icon">
+                                </button>
+                            </div>
                         </div>
 
                         <div class="mapping-section">
@@ -625,11 +641,13 @@
                     <h3>How to use?</h3>
                     <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
                     <ul>
-                        <li>Click on each owl statue to configure which other statues it affects when clicked (up to 4).</li>
+                        <li>Click on the corresponding grid where the owl statue is located to configure its groupation with other statues.</li>
                         <li>After configuring all statues, click "Next Step".</li>
                         <li>Select which owl statues are currently active (lit up).</li>
                         <li>Click "Solve Puzzle" to find the solution.</li>
+                        <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
                         <li>The orientation does not matter.</li>
+                        <li>Each statue is in a group of five.</li>
                     </ul>
                 </div>
             </div>
@@ -638,7 +656,7 @@
                 <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
                 <ul>
                     <li>Join the WoW Secret Hunting Discord server by <a href="https://discord.com/invite/wowsecrets" target="_blank">clicking here</a>.</li>
-                    <li>Check out the <a href="https://www.wowhead.com/news/felcycle-puzzle-update-4-torches-4-through-7-solved-351497#torch-7-watchers-solved" target="_blank">Wowhead Guide</a>.</li>
+                    <li>Check out the <a href=" https://www.wowhead.com/guide/secrets/ratts-revenge-incognitro-felcycle-guide" target="_blank">Wowhead guide</a>.</li>
                     <li>Other amazing tool for solving: <a href="https://ham.io/watcher-solver/" target="_blank">Watcher Solver by Levy</a>.</li>
                 </ul>
             </div>
@@ -781,14 +799,20 @@
                                 Object.values(flipMap).every(flips => flips && flips.length > 0);
 
             // Update alerts and buttons
-            document.getElementById('configureAlert').style.display = 
-                !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
+            const configureAlert = document.getElementById('configureAlert');
+            const nextStepButton = document.getElementById('nextStepButton');
+            configureAlert.style.display = !showInitialStateSelection && !isSettingFlips ? 'flex' : 'none';
+            if (allConfigured && !showInitialStateSelection && !isSettingFlips) {
+                configureAlert.querySelector('span').textContent = "Amazing! Seems like all statues are mapped, click on 'Next Step' to finish it.";
+                nextStepButton.style.display = 'block';
+            } else {
+                configureAlert.querySelector('span').textContent = "Interact with a statue in-game, click on the corresponding grid location on this website, afterwards click on the four grids that have changed when you have interacted with it.";
+                nextStepButton.style.display = 'none';
+            }
             document.getElementById('settingFlipsAlert').style.display = 
                 isSettingFlips ? 'block' : 'none';
             document.getElementById('initialStateAlert').style.display = 
                 showInitialStateSelection ? 'block' : 'none';
-            document.getElementById('nextStepButton').style.display = 
-                allConfigured && !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
 
             const settingFlipsAlert = document.getElementById('settingFlipsAlert');
             if (isSettingFlips) {
