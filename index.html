@@ -208,6 +208,23 @@
             color: white;
         }
 
+        .square.connected {
+            background-color: rgba(59, 130, 246, 0.85);  /* Light blue with 85% opacity */
+        }
+
+        .square.hidden {
+            opacity: 0.1;  /* Nearly invisible but still slightly visible for context */
+            transition: opacity 0.2s ease;
+        }
+
+        .square.solving-state {
+            pointer-events: auto;  /* Enable clicking during solve state */
+        }
+
+        .square.mapping-state {
+            pointer-events: auto;  /* Enable clicking during mapping state */
+        }
+
         .center-square {
             /* removing special border styling to match other squares */
         }
@@ -559,7 +576,7 @@
                                 <button class="button outline button-with-icon" id="copyButton">
                                     Copy <img src="./pictures/copy.png" alt="Copy" class="button-icon">
                                 </button>
-                                <button class="button outline button-with-icon" id="debugImportButton">
+                                <button class="button outline button-with-icon" id="debugImportButton" style="display: none;">
                                     Debug Import Mapping <img src="./pictures/copy.png" alt="Debug" class="button-icon">
                                 </button>
                             </div>
@@ -632,7 +649,7 @@
         </div>
         <div class="faq-section">
             <div style="display: flex; justify-content: center; margin: -10px 0 5px;">
-                <button class="button outline button-with-icon" id="placeholderBtn">
+                <button class="button outline button-with-icon" id="placeholderBtn" style="display: none;">
                     Switch to Pictures <img src="./pictures/copy.png" alt="Switch" class="button-icon">
                 </button>
             </div>
@@ -648,6 +665,7 @@
                         <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
                         <li>The orientation does not matter.</li>
                         <li>Each statue is in a group of five.</li>
+                        <li>Hover over a mapped grid to see its connections</li>
                     </ul>
                 </div>
             </div>
@@ -658,6 +676,13 @@
                     <li>Join the WoW Secret Hunting Discord server by <a href="https://discord.com/invite/wowsecrets" target="_blank">clicking here</a>.</li>
                     <li>Check out the <a href=" https://www.wowhead.com/guide/secrets/ratts-revenge-incognitro-felcycle-guide" target="_blank">Wowhead guide</a>.</li>
                     <li>Other amazing tool for solving: <a href="https://ham.io/watcher-solver/" target="_blank">Watcher Solver by Levy</a>.</li>
+                </ul>
+            </div>
+            <div class="help-section">
+                <h3>About</h3>
+                <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
+                <ul>
+                    <li><a href="https://github.com/migwynkriid/owlpuzzlesolver-wow" target="_blank">Source code</a></li>
                 </ul>
             </div>
         </div>
@@ -792,6 +817,45 @@
                     square.classList.remove('visual-mode');
                     square.style.color = '';
                 }
+
+                // Add hover event listeners based on state
+                if (!showInitialStateSelection) {
+                    square.classList.add('mapping-state');
+                    let hoverTimeout;
+                    
+                    square.onmouseenter = () => {
+                        if (!isSettingFlips && flipMap[index + 1]) {
+                            hoverTimeout = setTimeout(() => {
+                                // Hide all squares first
+                                squares.forEach(s => s.classList.add('hidden'));
+                                // Show hovered square and its connections
+                                square.classList.remove('hidden');
+                                flipMap[index + 1].forEach(connectedIndex => {
+                                    squares[connectedIndex - 1].classList.remove('hidden');
+                                    squares[connectedIndex - 1].classList.add('connected');
+                                });
+                            }, 400); // 0.4 seconds delay
+                        }
+                    };
+                    
+                    square.onmouseleave = () => {
+                        // Clear the timeout if mouse leaves before it triggers
+                        if (hoverTimeout) {
+                            clearTimeout(hoverTimeout);
+                        }
+                        // Show all squares and remove connected highlight
+                        squares.forEach(s => {
+                            s.classList.remove('hidden');
+                            s.classList.remove('connected');
+                        });
+                    };
+                } else {
+                    square.classList.remove('mapping-state');
+                    square.classList.add('solving-state');
+                    // Disable hover effects during solve state
+                    square.onmouseenter = null;
+                    square.onmouseleave = null;
+                }
             });
 
             // Check if all squares are configured
@@ -803,7 +867,7 @@
             const nextStepButton = document.getElementById('nextStepButton');
             configureAlert.style.display = !showInitialStateSelection && !isSettingFlips ? 'flex' : 'none';
             if (allConfigured && !showInitialStateSelection && !isSettingFlips) {
-                configureAlert.querySelector('span').textContent = "Amazing! Seems like all statues are mapped, click on 'Next Step' to finish it.";
+                configureAlert.querySelector('span').textContent = "Amazing! Seems like all statues are mapped, click on 'Next Step' to input the active statues.";
                 nextStepButton.style.display = 'block';
             } else {
                 configureAlert.querySelector('span').textContent = "Interact with a statue in-game, click on the corresponding grid location on this website, afterwards click on the four grids that have changed when you have interacted with it.";
