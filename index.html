@@ -740,6 +740,7 @@
 
         function handleSquareClick(index) {
             if (showInitialStateSelection) {
+                // Toggle initial state
                 if (initialState.has(index + 1)) {
                     initialState.delete(index + 1);
                 } else {
@@ -893,6 +894,9 @@
             } else {
                 settingFlipsAlert.querySelector('#doneButton').style.display = 'none';
             }
+
+            // Update solve button visibility based on selected squares
+            document.getElementById('solveButton').style.display = initialState.size > 0 ? 'block' : 'none';
 
             // Always update the flip map text unless it's being edited
             const flipMapText = document.getElementById('flipMapText');
