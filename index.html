@@ -129,10 +129,10 @@
 23: [3, 4, 10, 17]
 24: [1, 10, 16, 19]
 25: [6, 9, 12, 22]`;
-                                
+                                 
                                 const textarea = document.getElementById('flipMapText');
                                 textarea.value = debugMappings;
-                                
+                                 
                                 // Trigger the input event to update the UI
                                 const event = new Event('input', {
                                     bubbles: true,
@@ -369,6 +369,11 @@
             // Update alerts and buttons
             const configureAlert = document.getElementById('configureAlert');
             const nextStepButton = document.getElementById('nextStepButton');
+            const backButton = document.getElementById('backButton');
+            
+            // Show/hide back button based on state
+            backButton.style.display = showInitialStateSelection ? 'block' : 'none';
+            
             configureAlert.style.display = !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
             if (allConfigured && !showInitialStateSelection && !isSettingFlips) {
                 configureAlert.querySelector('span').textContent = "Amazing! Seems like all statues are mapped, click on 'Next Step' to input the active statues.";
@@ -634,6 +639,11 @@
             document.getElementById('resetButton').onclick = resetAll;
             document.getElementById('cancelReset').onclick = hideResetDialog;
             document.getElementById('placeholderBtn').onclick = toggleVisualMode;
+            document.getElementById('backButton').onclick = () => {
+                showInitialStateSelection = false;
+                initialState = new Set();
+                updateUI();
+            };
 
             // Initialize the puzzle
             initializeGrid();

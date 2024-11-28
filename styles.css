@@ -564,34 +564,49 @@ button:disabled {
 }
 
 /* Button hover states */
+#resetButton {
+    border-color: #b92626;
+    color: #b92626;
+}
+
 #resetButton:hover {
-    background-color: #ef4444;
+    background-color: #b92626;
     color: white;
-    border-color: #ef4444;
+    border-color: #b92626;
 }
 
 #copyButton:hover {
     background-color: #93c5fd;
-    border-color: #93c5fd;
+    border-color: black;
     color: white;
 }
 
 #solveButton:hover {
     background-color: #22c55e;
-    border-color: #22c55e;
+    border-color: black;
     color: white;
 }
 
 #doneButton:hover {
     background-color: #22c55e;
-    border-color: #22c55e;
+    border-color: black;
+    color: white;
+}
+
+#backButton:hover {
+    background-color: #93c5fd;
+    border-color: black;
     color: white;
 }
 
 .button.outline.button-with-icon#nextStepButton:hover {
     background-color: #22c55e;
-    border-color: #22c55e;
+    border-color: black;
     color: white;
+}
+
+button:hover {
+    border-color: black;
 }
 
 /* Close button styles */
