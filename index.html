@@ -19,7 +19,7 @@
     <div class="container">
         <div class="main-content">
             <div class="title-section">
-                <h1>Glazer's Owl Puzzle</h1>
+                <h1 id="title">Glazer's Owl Puzzle</h1>
             </div>
             <div class="card">
                 <div class="card-content">
@@ -627,16 +627,17 @@
             visualButton.innerHTML = `<img src="./pictures/copy.png" alt="Switch" class="button-icon"> ${newText}`;
         }
 
-        // Event Listeners
-        document.getElementById('doneButton').onclick = handleDoneSettingFlips;
-        document.getElementById('nextStepButton').onclick = handleNextStep;
-        document.getElementById('solveButton').onclick = handleSolve;
-        document.getElementById('resetButton').onclick = resetAll;
-        document.getElementById('cancelReset').onclick = hideResetDialog;
-        document.getElementById('placeholderBtn').onclick = toggleVisualMode;
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('doneButton').onclick = handleDoneSettingFlips;
+            document.getElementById('nextStepButton').onclick = handleNextStep;
+            document.getElementById('solveButton').onclick = handleSolve;
+            document.getElementById('resetButton').onclick = resetAll;
+            document.getElementById('cancelReset').onclick = hideResetDialog;
+            document.getElementById('placeholderBtn').onclick = toggleVisualMode;
 
-        // Initialize the puzzle
-        initializeGrid();
+            // Initialize the puzzle
+            initializeGrid();
+        });
     </script>
 </body>
 </html>
