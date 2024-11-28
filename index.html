@@ -33,7 +33,7 @@
                             <div class="alert-content">
                                 <span>Select the 4 statues that change when the owl statue is clicked. Once mapped, click "Next Step."</span>
                                 <button id="nextStepButton" class="button outline button-with-icon">
-                                    Next Step <img src="./pictures/next.png" alt="Next" class="button-icon">
+                                    <img src="./pictures/next.png" alt="Next" class="button-icon"> Next Step
                                 </button>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                                     <div class="selection-counter">Selected: <span id="flipCount">0</span>/4</div>
                                 </div>
                                 <button class="button outline button-with-icon" id="doneButton">
-                                    Done <img src="./pictures/checkmark.png" alt="Done" class="button-icon">
+                                    <img src="./pictures/checkmark.png" alt="Done" class="button-icon"> Done
                                 </button>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                             <div class="alert-content">
                                 <span>Now highlight the currently active owl statues on the grid from the puzzle in game</span>
                                 <button class="button outline button-with-icon" id="solveButton">
-                                    Solve Puzzle <img src="./pictures/solve.png" alt="Solve" class="button-icon">
+                                    <img src="./pictures/solve.png" alt="Solve" class="button-icon"> Solve Puzzle
                                 </button>
                             </div>
                         </div>
@@ -73,14 +73,17 @@
                         <div class="button-group">
                             <div>
                                 <button class="button outline button-with-icon" id="copyButton">
-                                    Copy <img src="./pictures/copy.png" alt="Copy" class="button-icon">
+                                    <img src="./pictures/copy.png" alt="Copy" class="button-icon"> Copy
+                                </button>
+                                <button class="button outline button-with-icon" id="backButton">
+                                    <img src="./pictures/back.png" alt="Back" class="button-icon"> Back (WIP)
                                 </button>
                                 <button class="button outline button-with-icon" id="debugImportButton" style="display: none;">
-                                    Debug Import Mapping <img src="./pictures/copy.png" alt="Debug" class="button-icon">
+                                    <img src="./pictures/copy.png" alt="Debug" class="button-icon"> Debug Import Mapping
                                 </button>
                             </div>
                             <button class="button outline button-with-icon" id="resetButton">
-                                Reset<img src="./pictures/x.png" alt="Reset" class="button-icon">
+                                <img src="./pictures/x.png" alt="Reset" class="button-icon"> Reset
                             </button>
                         </div>
 
@@ -149,7 +152,7 @@
         <div class="faq-section">
             <div>
                 <button class="button outline button-with-icon" id="placeholderBtn">
-                    Switch to Pictures <img src="./pictures/copy.png" alt="Switch" class="button-icon">
+                    <img src="./pictures/copy.png" alt="Switch" class="button-icon"> Switch to Pictures
                 </button>
             </div>
             <div class="how-to-use-section">
@@ -366,60 +369,39 @@
             // Update alerts and buttons
             const configureAlert = document.getElementById('configureAlert');
             const nextStepButton = document.getElementById('nextStepButton');
-            
-            if (configureAlert) {
-                configureAlert.style.display = !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
-                const configureSpan = configureAlert.querySelector('span');
-                if (configureSpan) {
-                    if (allConfigured && !showInitialStateSelection && !isSettingFlips) {
-                        configureSpan.textContent = "Amazing! Seems like all statues are mapped, click on 'Next Step' to input the active statues.";
-                        if (nextStepButton) nextStepButton.style.display = 'block';
-                    } else {
-                        configureSpan.textContent = "Interact with a statue in-game, click on the corresponding grid location on this website, afterwards click on the four grids that have changed when you have interacted with it.";
-                        if (nextStepButton) nextStepButton.style.display = 'none';
-                    }
-                }
+            configureAlert.style.display = !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
+            if (allConfigured && !showInitialStateSelection && !isSettingFlips) {
+                configureAlert.querySelector('span').textContent = "Amazing! Seems like all statues are mapped, click on 'Next Step' to input the active statues.";
+                nextStepButton.style.display = 'block';
+            } else {
+                configureAlert.querySelector('span').textContent = "Interact with a statue in-game, click on the corresponding grid location on this website, afterwards click on the four grids that have changed when you have interacted with it.";
+                nextStepButton.style.display = 'none';
             }
+            document.getElementById('settingFlipsAlert').style.display = 
+                isSettingFlips ? 'block' : 'none';
+            document.getElementById('initialStateAlert').style.display = 
+                showInitialStateSelection ? 'block' : 'none';
 
             const settingFlipsAlert = document.getElementById('settingFlipsAlert');
-            const initialStateAlert = document.getElementById('initialStateAlert');
-            
-            if (settingFlipsAlert) {
-                settingFlipsAlert.style.display = isSettingFlips ? 'block' : 'none';
-                if (isSettingFlips) {
-                    const currentSquareNum = settingFlipsAlert.querySelector('#currentSquareNum');
-                    const flipCount = settingFlipsAlert.querySelector('#flipCount');
-                    const doneButton = settingFlipsAlert.querySelector('#doneButton');
-                    
-                    if (currentSquareNum) currentSquareNum.textContent = currentSquare + 1;
-                    if (flipCount) flipCount.textContent = currentFlipsCount;
-                    if (doneButton) doneButton.style.display = 'block';
-                } else {
-                    const doneButton = settingFlipsAlert.querySelector('#doneButton');
-                    if (doneButton) doneButton.style.display = 'none';
-                }
-            }
-
-            if (initialStateAlert) {
-                initialStateAlert.style.display = showInitialStateSelection ? 'block' : 'none';
+            if (isSettingFlips) {
+                settingFlipsAlert.querySelector('#currentSquareNum').textContent = currentSquare + 1;
+                settingFlipsAlert.querySelector('#flipCount').textContent = currentFlipsCount;
+                settingFlipsAlert.querySelector('#doneButton').style.display = 'block';
+            } else {
+                settingFlipsAlert.querySelector('#doneButton').style.display = 'none';
             }
 
             // Update solve button visibility based on selected squares
-            const solveButton = document.getElementById('solveButton');
-            if (solveButton) {
-                solveButton.style.display = initialState.size > 0 ? 'block' : 'none';
-            }
+            document.getElementById('solveButton').style.display = initialState.size > 0 ? 'block' : 'none';
 
             // Always update the flip map text unless it's being edited
             const flipMapText = document.getElementById('flipMapText');
-            if (flipMapText && !flipMapText.matches(':focus')) {
+            if (!flipMapText.matches(':focus')) {
                 flipMapText.value = generateFlipMapText();
             }
 
-            const title = document.getElementById('title');
-            if (title) {
-                title.textContent = showInitialStateSelection ? 'Select Active Statues' : 'Map Statue Connections';
-            }
+            document.getElementById('title').textContent = 
+                showInitialStateSelection ? 'Select Current Active Owl Statues' : 'Glazer Puzzle';
         }
 
         function getRemainingSquares() {
@@ -642,27 +624,19 @@
             
             const visualButton = document.getElementById('placeholderBtn');
             const newText = gridType === 'gridnumbers' ? 'Switch to Pictures' : 'Switch to Numbers';
-            visualButton.innerHTML = `${newText} <img src="./pictures/copy.png" alt="Switch" class="button-icon">`;
+            visualButton.innerHTML = `<img src="./pictures/copy.png" alt="Switch" class="button-icon"> ${newText}`;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('doneButton').onclick = handleDoneSettingFlips;
-            document.getElementById('nextStepButton').onclick = handleNextStep;
-            document.getElementById('solveButton').onclick = handleSolve;
-            document.getElementById('resetButton').onclick = resetAll;
-            document.getElementById('cancelReset').onclick = hideResetDialog;
-            document.getElementById('confirmReset').onclick = () => {
-                resetAll();
-                hideResetDialog();
-            };
-            document.getElementById('placeholderBtn').onclick = toggleVisualMode;
-            document.getElementById('copyButton').onclick = copyMapping;
-            document.getElementById('debugImportButton').onclick = insertDebugMappings;
-            document.getElementById('flipMapText').oninput = (e) => handleFlipMapInput(e.target.value);
+        // Event Listeners
+        document.getElementById('doneButton').onclick = handleDoneSettingFlips;
+        document.getElementById('nextStepButton').onclick = handleNextStep;
+        document.getElementById('solveButton').onclick = handleSolve;
+        document.getElementById('resetButton').onclick = resetAll;
+        document.getElementById('cancelReset').onclick = hideResetDialog;
+        document.getElementById('placeholderBtn').onclick = toggleVisualMode;
 
-            // Initialize the puzzle
-            initializeGrid();
-        });
+        // Initialize the puzzle
+        initializeGrid();
     </script>
 </body>
 </html>

@@ -208,7 +208,7 @@ body::before {
 }
 
 button {
-    padding: 8px 16px;
+    padding: 6px 14px;
     border: none;
     border-radius: 4px;
     background-color: #3b82f6;
@@ -473,9 +473,10 @@ button:disabled {
 }
 
 .button-icon {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     vertical-align: middle;
+    margin: -2px;
 }
 
 /* Space utilities */
