@@ -76,7 +76,7 @@
                                     <img src="./pictures/copy.png" alt="Copy" class="button-icon"> Copy
                                 </button>
                                 <button class="button outline button-with-icon" id="backButton">
-                                    <img src="./pictures/back.png" alt="Back" class="button-icon"> Back (WIP)
+                                    <img src="./pictures/back.png" alt="Back" class="button-icon"> Back
                                 </button>
                                 <button class="button outline button-with-icon" id="debugImportButton" style="display: none;">
                                     <img src="./pictures/copy.png" alt="Debug" class="button-icon"> Debug Import Mapping
@@ -282,6 +282,9 @@
         function handleDoneSettingFlips() {
             if (currentSquare !== null && flipMap[currentSquare + 1]) {
                 flipMap[currentSquare + 1].sort((a, b) => a - b);
+                
+                // Log the connection immediately when it's completed
+                console.log(`Grid ${currentSquare + 1} connections: [${flipMap[currentSquare + 1].join(', ')}]`);
             }
             
             isSettingFlips = false;
@@ -482,12 +485,6 @@
                 
                 console.log('Starting solve with:');
                 console.log('Initial active statues:', Array.from(initialState).sort((a, b) => a - b).join(', '));
-                console.log('Flip connections:');
-                Object.entries(flipMap).forEach(([piece, connections]) => {
-                    if (connections && connections.length > 0) {
-                        console.log(`${piece}: [${connections.join(', ')}]`);
-                    }
-                });
                 
                 solution = solvePuzzle(initialStateBits);
                 
