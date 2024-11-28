@@ -1,0 +1,699 @@
+@font-face {
+    font-family: 'CustomFont';
+    src: url('./font/font.ttf') format('truetype');
+}
+
+* {
+    font-family: 'CustomFont', sans-serif;
+}
+
+/* Keep monospace for the textarea */
+textarea {
+    font-family: monospace;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: url('./pictures/background.png') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+}
+
+.container {
+    display: flex;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.faq-section {
+    width: 270px;
+    padding: 13.5px;
+    background: transparent;
+    font-size: 0.9em;
+}
+
+.faq-section h3 {
+    margin: 0 0 9px 0;
+    text-align: center;
+    padding-bottom: 9px;
+    font-size: 1.17em;
+}
+
+.faq-section ol {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.faq-section li {
+    margin-bottom: 9px;
+    line-height: 1.26;
+}
+
+.faq-section li:last-child {
+    margin-bottom: 0;
+}
+
+.faq-section a {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+
+.faq-section a:hover {
+    color: #2563eb;
+}
+
+.card {
+    max-width: none;
+    margin: 0;
+}
+
+.faq-textarea {
+    width: 100%;
+    height: 400px;
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: sans-serif;
+    resize: vertical;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(5, 75px);
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9fafb;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.square {
+    width: 75px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.square:hover {
+    background-color: #f3f4f6;
+    transform: scale(1.05);
+    z-index: 1;
+}
+
+.square.selected {
+    background-color: #ef4444;
+    color: white;
+}
+
+.square.configured {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.square.flip-target {
+    background-color: #bbf7d0;
+}
+
+.square.initial-state {
+    background-color: #8b5cf6;
+    color: white;
+}
+
+.square.visual-mode {
+    background-image: url('./pictures/tile.png');
+    background-size: 100% 100%;  
+    background-position: center;
+    background-repeat: no-repeat;
+    border: none;
+    position: relative;
+    border-radius: 8px;
+}
+
+.square.visual-mode::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;  
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.square.visual-mode.selected::after,
+.square.visual-mode.configured::after,
+.square.visual-mode.flip-target::after {
+    background-image: url('./pictures/placed.png');
+}
+
+.square.visual-mode.center-square {
+    border: none;
+}
+
+.square.connected {
+    background-color: rgba(59, 130, 246, 0.9);
+    color: white;
+    opacity: 0.9;
+}
+
+.square.faded {
+    opacity: 0.1;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.square.hidden {
+    visibility: hidden;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #3b82f6;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #2563eb;
+}
+
+button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #ef4444;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.reset-dialog {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.reset-dialog-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.reset-dialog-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.close-button:hover {
+    color: #374151;
+}
+
+.title-section {
+    text-align: center;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+}
+
+.title-section h1 {
+    white-space: nowrap;
+    margin: 0;
+}
+
+#configureAlert {
+    display: block;
+}
+
+#configureAlert span {
+    flex: 1;
+    margin-right: 10px;
+}
+
+#settingFlipsAlert {
+    display: none;
+}
+
+#settingFlipsAlert > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#settingFlipsAlert > div > div {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#initialStateAlert {
+    display: none;
+}
+
+#initialStateAlert > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#initialStateAlert p {
+    margin: 0;
+    flex: 1;
+    line-height: 24px;
+}
+
+#errorAlert {
+    display: none;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.button-group > div {
+    display: flex;
+    gap: 10px;
+}
+
+.faq-section > div:first-child {
+    display: flex;
+    justify-content: center;
+    margin: -10px 0 5px;
+}
+
+#placeholderBtn {
+    display: none;
+}
+
+.how-to-use-section, .help-section {
+    margin-bottom: 15px;
+    border: 2px solid #a9abaf;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.how-to-use-section > div {
+    margin-bottom: 0;
+}
+
+.how-to-use-section h3, .help-section h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.how-to-use-section ul, .help-section ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.how-to-use-section li, .help-section li {
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.how-to-use-section hr, .help-section hr {
+    border: none;
+    height: 2px;
+    background-color: #e5e7eb;
+    margin: 8px 0;
+}
+
+.help-section {
+    margin-bottom: 15px;
+}
+
+.help-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Dialog styles */
+.dialog {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.dialog h3 {
+    margin-top: 0;
+}
+
+.dialog-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Reset dialog styles */
+#resetDialog {
+    text-align: center;
+}
+
+#resetDialog .button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Button styles */
+.button-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.button-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
+/* Space utilities */
+.space-y-4 > * {
+    margin-bottom: 16px;
+}
+
+/* Alert styles */
+.alert {
+    background-color: #f3f4f6;
+    border: 1.25px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    height: 4.2rem;
+    box-sizing: border-box;
+}
+
+.alert-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    height: 100%;
+}
+
+.alert-content span {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.5;
+}
+
+.alert-content button {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.alert.error {
+    height: 4.2rem;
+    background-color: #ffebee;
+    border: 1.25px solid #ef5350;
+    color: #c62828;
+}
+
+.alert.success {
+    background-color: #f1f8e9;
+    border: 2.5px solid #4caf50;
+    color: #2e7d32;
+}
+
+.alert.success strong {
+    font-weight: bold;
+}
+
+/* Mapping section styles */
+.mapping-section {
+    border: 1.25px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+}
+
+.mapping-section p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.mapping-section textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1.25px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+/* Hit counter styles */
+.hit-counter {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+/* Button hover states */
+#resetButton:hover {
+    background-color: #ef4444;
+    color: white;
+    border-color: #ef4444;
+}
+
+#copyButton:hover {
+    background-color: #93c5fd;
+    border-color: #93c5fd;
+    color: white;
+}
+
+#solveButton:hover {
+    background-color: #22c55e;
+    border-color: #22c55e;
+    color: white;
+}
+
+#doneButton:hover {
+    background-color: #22c55e;
+    border-color: #22c55e;
+    color: white;
+}
+
+.button.outline.button-with-icon#nextStepButton:hover {
+    background-color: #22c55e;
+    border-color: #22c55e;
+    color: white;
+}
+
+/* Close button styles */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.close-button:hover {
+    background: #f3f4f6;
+}
+
+/* Config section styles */
+.config-section {
+    border: 1.25px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.config-section p {
+    margin: 5px 0;
+}
+
+/* FAQ Modal */
+#faqModal {
+    display: none;
+}
+
+/* Additional button styles */
+.button {
+    padding: 8px 16px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button:hover {
+    background-color: #2563eb;
+}
+
+.button.outline {
+    background-color: transparent;
+    border: 1.25px solid #3b82f6;
+    color: #3b82f6;
+}
+
+.button.danger {
+    background-color: #dc2626;
+    color: white;
+}
+
+.button.danger:hover {
+    background-color: #b91c1c;
+}
+
+#nextStepButton {
+    display: none;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+#solveButton {
+    min-width: 120px;
+}
+
+.statue-selection-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex: 1;
+}
+
+.statue-selection-info span {
+    white-space: nowrap;
+}
+
+.selection-counter {
+    white-space: nowrap;
+    color: #4b5563;
+}
+
+#currentSquareNum {
+    font-weight: 500;
+    color: #3b82f6;
+    margin: 0 0.25rem;
+}
+
+#settingFlipsAlert .alert-content {
+    padding: 0.25rem 0;
+}

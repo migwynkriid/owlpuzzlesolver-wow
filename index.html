@@ -13,541 +13,36 @@
     <meta property="og:description" content="Interactive solver for World of Warcraft's Vault of the Wardens Glazer's Owl Puzzle">
     <meta property="og:image" content="https://raw.githubusercontent.com/migwynkriid/owlpuzzlesolver-wow/main/pictures/favicon.jpg">
     <meta property="og:type" content="website">
-    <style>
-        @font-face {
-            font-family: 'CustomFont';
-            src: url('./font/font.ttf') format('truetype');
-        }
-
-        * {
-            font-family: 'CustomFont', sans-serif;
-        }
-
-        /* Keep monospace for the textarea */
-        textarea {
-            font-family: monospace;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background: url('./pictures/background.png') no-repeat center center fixed;
-            background-size: cover;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            z-index: 0;
-        }
-
-        .container {
-            display: flex;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            gap: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 2;
-        }
-
-        .main-content {
-            flex: 1;
-        }
-
-        .faq-section {
-            width: 270px;
-            padding: 13.5px;
-            background: transparent;
-            font-size: 0.9em;
-        }
-
-        .faq-section h3 {
-            margin: 0 0 9px 0;
-            text-align: center;
-            padding-bottom: 9px;
-            font-size: 1.17em;
-        }
-
-        .faq-section ol {
-            margin: 0;
-            padding-left: 18px;
-        }
-
-        .faq-section li {
-            margin-bottom: 9px;
-            line-height: 1.26;
-        }
-
-        .faq-section li:last-child {
-            margin-bottom: 0;
-        }
-
-        .faq-section a {
-            color: #3b82f6;
-            text-decoration: underline;
-        }
-
-        .faq-section a:hover {
-            color: #2563eb;
-        }
-
-        .card {
-            max-width: none;
-            margin: 0;
-        }
-
-        .faq-textarea {
-            width: 100%;
-            height: 400px;
-            margin-top: 10px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: sans-serif;
-            resize: vertical;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(5, 75px);
-            gap: 10px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9fafb;
-            width: fit-content;
-            margin: 0 auto;
-        }
-
-        .square {
-            width: 75px;
-            height: 75px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 16px;
-            border-radius: 8px;
-        }
-
-        .square:hover {
-            background-color: #f3f4f6;
-        }
-
-        .square.selected {
-            background-color: #ef4444;
-            color: white;
-        }
-
-        .square.configured {
-            background-color: #3b82f6;
-            color: white;
-        }
-
-        .square.flip-target {
-            background-color: #bbf7d0;
-        }
-
-        .square.initial-state {
-            background-color: #8b5cf6;
-            color: white;
-        }
-
-        .square.visual-mode {
-            background-image: url('./pictures/tile.png');
-            background-size: 100% 100%;  
-            background-position: center;
-            background-repeat: no-repeat;
-            border: none;
-            position: relative;
-            border-radius: 8px;
-        }
-
-        .square.visual-mode::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: 100% 100%;  
-            background-position: center;
-            background-repeat: no-repeat;
-            pointer-events: none;
-        }
-
-        .square.visual-mode.selected::after,
-        .square.visual-mode.configured::after,
-        .square.visual-mode.flip-target::after {
-            background-image: url('./pictures/placed.png');
-        }
-
-        .square.visual-mode.center-square {
-            border: none;
-        }
-
-        .square.visual-mode.selected {
-            background-color: #ef4444;
-            color: white;
-        }
-
-        .square.visual-mode.configured {
-            background-color: #3b82f6;
-            color: white;
-        }
-
-        .square.visual-mode.flip-target {
-            background-color: #bbf7d0;
-        }
-
-        .square.visual-mode.initial-state {
-            background-color: #8b5cf6;
-            color: white;
-        }
-
-        .square.connected {
-            background-color: rgba(59, 130, 246, 0.85);  /* Light blue with 85% opacity */
-        }
-
-        .square.hidden {
-            opacity: 0.1;  /* Nearly invisible but still slightly visible for context */
-            transition: opacity 0.2s ease;
-        }
-
-        .square.solving-state {
-            pointer-events: auto;  /* Enable clicking during solve state */
-        }
-
-        .square.mapping-state {
-            pointer-events: auto;  /* Enable clicking during mapping state */
-        }
-
-        .square.visual-mode.center-square {
-            border: none;
-        }
-
-        .alert {
-            background-color: #f3f4f6;
-            border: 1.25px solid #d1d5db;
-            border-radius: 0.375rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .alert p {
-            margin: 0.5rem 0;
-        }
-
-        .alert button {
-            margin-top: 0.5rem;
-        }
-
-        .alert.error {
-            background-color: #ffebee;
-            border: 1.25px solid #ef5350;
-            color: #c62828;
-        }
-
-        .alert.success {
-            background-color: #f1f8e9;
-            border: 2.5px solid #4caf50;
-            color: #2e7d32;
-        }
-
-        .alert.success strong {
-            font-weight: bold;
-        }
-
-        .button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background-color: #3b82f6;
-            color: white;
-            cursor: pointer;
-            margin: 4px;
-        }
-
-        .button:hover {
-            background-color: #2563eb;
-        }
-
-        .button.outline {
-            background-color: transparent;
-            border: 1.25px solid #3b82f6;
-            color: #3b82f6;
-        }
-
-        .button.danger {
-            background-color: #dc2626;
-            color: white;
-        }
-
-        .button.danger:hover {
-            background-color: #b91c1c;
-        }
-
-        #resetButton:hover {
-            background-color: #ef4444;
-            color: white;
-            border-color: #ef4444;
-        }
-
-        #copyButton:hover {
-            background-color: #93c5fd;
-            border-color: #93c5fd;
-            color: white;
-        }
-
-        #solveButton:hover {
-            background-color: #22c55e;
-            border-color: #22c55e;
-            color: white;
-        }
-
-        #doneButton:hover {
-            background-color: #22c55e;
-            border-color: #22c55e;
-            color: white;
-        }
-
-        textarea {
-            width: 100%;
-            height: 120px;
-            font-family: monospace;
-            margin: 8px 0;
-            padding: 8px;
-        }
-
-        .space-y-4 > * {
-            margin-bottom: 16px;
-        }
-
-        .dialog {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .dialog-backdrop {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .mapping-section {
-            border: 1.25px solid #ccc;
-            border-radius: 4px;
-            padding: 10px;
-            margin: 10px 0;
-            box-sizing: border-box;
-        }
-
-        .mapping-section p {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-
-        .mapping-section textarea {
-            width: 100%;
-            min-height: 100px;
-            border: 1.25px solid #ccc;
-            border-radius: 4px;
-            padding: 8px;
-            font-family: monospace;
-            box-sizing: border-box;
-        }
-
-        .config-section {
-            border: 1.25px solid #ccc;
-            border-radius: 4px;
-            padding: 10px;
-            margin: 10px 0;
-        }
-
-        .config-section p {
-            margin: 5px 0;
-        }
-
-        .faq-button {
-            display: none;
-        }
-
-        #faqModal {
-            display: none;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-        }
-
-        .close-button:hover {
-            background: #f3f4f6;
-        }
-
-        .title-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .title-section h1 {
-            margin: 0;
-            flex: 1;
-        }
-
-        #placeholderBtn {
-            padding: 8px 16px;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        #placeholderBtn:hover {
-            background-color: #2563eb;
-        }
-
-        .button-group {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .button-with-icon {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .button-icon {
-            width: 16px;
-            height: 16px;
-            vertical-align: middle;
-        }
-
-        .hit-counter {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
-
-        .how-to-use-section, .help-section {
-            margin-bottom: 20px;
-            border: 2px solid #a9abaf;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: rgba(255, 255, 255, 0.95);
-        }
-
-        .how-to-use-section h3, .help-section h3 {
-            margin-top: 0;
-        }
-
-        .how-to-use-section ul, .help-section ul {
-            margin-bottom: 0;
-            padding-left: 20px;
-        }
-
-        .button.outline.button-with-icon#nextStepButton:hover {
-            background-color: #22c55e;
-            border-color: #22c55e;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="main-content">
-            <div class="title-section" style="text-align: center; border-bottom: 2px solid #ccc; margin-bottom: 25px; padding-bottom: 15px;">
-                <h1 style="white-space: nowrap; margin: 0;">Glazer's Owl Puzzle</h1>
+            <div class="title-section">
+                <h1>Glazer's Owl Puzzle</h1>
             </div>
             <div class="card">
                 <div class="card-content">
-                    <div id="flipDialog" class="dialog" style="display: none;">
+                    <div id="flipDialog" class="dialog">
                     </div>
 
                     <div class="space-y-4">
                         <div class="grid" id="puzzleGrid"></div>
 
-                        <div id="configureAlert" class="alert" style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>Select the 4 statues that change when the owl statue is clicked. Once mapped, click "Next Step."</span>
-                            <button id="nextStepButton" class="button outline button-with-icon" style="display: none;">
-                                Next Step <img src="./pictures/next.png" alt="Next" class="button-icon">
-                            </button>
+                        <div id="configureAlert" class="alert">
+                            <div class="alert-content">
+                                <span>Select the 4 statues that change when the owl statue is clicked. Once mapped, click "Next Step."</span>
+                                <button id="nextStepButton" class="button outline button-with-icon">
+                                    Next Step <img src="./pictures/next.png" alt="Next" class="button-icon">
+                                </button>
+                            </div>
                         </div>
 
-                        <div id="settingFlipsAlert" class="alert" style="display: none;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    Select the 4 statues that gets changed when owl statue <span id="currentSquareNum"></span> is clicked.
-                                    <span>Selected: <span id="flipCount">0</span>/4</span>
+                        <div id="settingFlipsAlert" class="alert">
+                            <div class="alert-content">
+                                <div class="statue-selection-info">
+                                    <span>Select the 4 statues that gets changed when owl statue <span id="currentSquareNum"></span> is clicked.</span>
+                                    <div class="selection-counter">Selected: <span id="flipCount">0</span>/4</div>
                                 </div>
                                 <button class="button outline button-with-icon" id="doneButton">
                                     Done <img src="./pictures/checkmark.png" alt="Done" class="button-icon">
@@ -555,9 +50,9 @@
                             </div>
                         </div>
 
-                        <div id="initialStateAlert" class="alert" style="display: none;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                <p style="margin: 0;">Now highlight the currently active owl statues on the grid from the puzzle in game</p>
+                        <div id="initialStateAlert" class="alert">
+                            <div class="alert-content">
+                                <span>Now highlight the currently active owl statues on the grid from the puzzle in game</span>
                                 <button class="button outline button-with-icon" id="solveButton">
                                     Solve Puzzle <img src="./pictures/solve.png" alt="Solve" class="button-icon">
                                 </button>
@@ -569,19 +64,18 @@
                             <textarea id="flipMapText" oninput="handleFlipMapInput(this.value)"></textarea>
                         </div>
 
-                        <div id="activeStatuesSection" style="display: none;">
-                            <p><strong>Current Active Owl Statues:</strong></p>
-                            <pre id="activeStatues" style="white-space: pre-wrap; border: 1.25px solid #ccc; padding: 10px; margin-top: 5px;"></pre>
+                        <div id="errorAlert" class="alert error">
+                            <div class="alert-content">
+                                <span id="errorText"></span>
+                            </div>
                         </div>
 
-                        <div id="errorAlert" class="alert error" style="display: none;"></div>
-
-                        <div class="button-group" style="display: flex; justify-content: space-between; width: 100%;">
-                            <div style="display: flex; gap: 10px;">
+                        <div class="button-group">
+                            <div>
                                 <button class="button outline button-with-icon" id="copyButton">
                                     Copy <img src="./pictures/copy.png" alt="Copy" class="button-icon">
                                 </button>
-                                <button class="button outline button-with-icon" id="debugImportButton" style="display: none;">
+                                <button class="button outline button-with-icon" id="debugImportButton">
                                     Debug Import Mapping <img src="./pictures/copy.png" alt="Debug" class="button-icon">
                                 </button>
                             </div>
@@ -653,21 +147,21 @@
             </div>
         </div>
         <div class="faq-section">
-            <div style="display: flex; justify-content: center; margin: -10px 0 5px;">
-                <button class="button outline button-with-icon" id="placeholderBtn" style="display: none;">
+            <div>
+                <button class="button outline button-with-icon" id="placeholderBtn">
                     Switch to Pictures <img src="./pictures/copy.png" alt="Switch" class="button-icon">
                 </button>
             </div>
             <div class="how-to-use-section">
-                <div style="margin-bottom: 20px;">
+                <div>
                     <h3>How to use?</h3>
-                    <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
+                    <hr>
                     <ul>
                         <li>Click on the corresponding grid where the owl statue is located to configure its groupation with other statues.</li>
                         <li>After configuring all statues, click "Next Step".</li>
                         <li>Select which owl statues are currently active (lit up).</li>
                         <li>Click "Solve Puzzle" to find the solution.</li>
-                        <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
+                        <hr>
                         <li>The orientation does not matter.</li>
                         <li>Each statue is in a group of five.</li>
                         <li>Hover over a mapped grid to see its connections</li>
@@ -676,7 +170,7 @@
             </div>
             <div class="help-section">
                 <h3>Need help?</h3>
-                <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
+                <hr>
                 <ul>
                     <li>Join the WoW Secret Hunting Discord server by <a href="https://discord.com/invite/wowsecrets" target="_blank">clicking here</a>.</li>
                     <li>Check out the <a href=" https://www.wowhead.com/guide/secrets/ratts-revenge-incognitro-felcycle-guide" target="_blank">Wowhead guide</a>.</li>
@@ -685,7 +179,7 @@
             </div>
             <div class="help-section">
                 <h3>About</h3>
-                <hr style="border: none; height: 3px; background-color: #e5e7eb; margin: 10px 0;">
+                <hr>
                 <ul>
                     <li><a href="https://github.com/migwynkriid/owlpuzzlesolver-wow" target="_blank">Source code</a></li>
                     <li>Discord: migwynkriid (Website)</li>
@@ -834,12 +328,12 @@
                     square.onmouseenter = () => {
                         if (!isSettingFlips && flipMap[index + 1]) {
                             hoverTimeout = setTimeout(() => {
-                                // Hide all squares first
-                                squares.forEach(s => s.classList.add('hidden'));
-                                // Show hovered square and its connections
-                                square.classList.remove('hidden');
+                                // Add faded class to all squares
+                                squares.forEach(s => s.classList.add('faded'));
+                                // Remove faded from hovered square and its connections
+                                square.classList.remove('faded');
                                 flipMap[index + 1].forEach(connectedIndex => {
-                                    squares[connectedIndex - 1].classList.remove('hidden');
+                                    squares[connectedIndex - 1].classList.remove('faded');
                                     squares[connectedIndex - 1].classList.add('connected');
                                 });
                             }, 400); // 0.4 seconds delay
@@ -851,10 +345,9 @@
                         if (hoverTimeout) {
                             clearTimeout(hoverTimeout);
                         }
-                        // Show all squares and remove connected highlight
+                        // Remove faded and connected classes from all squares
                         squares.forEach(s => {
-                            s.classList.remove('hidden');
-                            s.classList.remove('connected');
+                            s.classList.remove('faded', 'connected');
                         });
                     };
                 } else {
@@ -873,7 +366,7 @@
             // Update alerts and buttons
             const configureAlert = document.getElementById('configureAlert');
             const nextStepButton = document.getElementById('nextStepButton');
-            configureAlert.style.display = !showInitialStateSelection && !isSettingFlips ? 'flex' : 'none';
+            configureAlert.style.display = !showInitialStateSelection && !isSettingFlips ? 'block' : 'none';
             if (allConfigured && !showInitialStateSelection && !isSettingFlips) {
                 configureAlert.querySelector('span').textContent = "Amazing! Seems like all statues are mapped, click on 'Next Step' to input the active statues.";
                 nextStepButton.style.display = 'block';
@@ -995,7 +488,7 @@
                     
                     // Update the instruction text with the solution and apply success styling
                     const initialStateAlert = document.getElementById('initialStateAlert');
-                    const instructionText = initialStateAlert.querySelector('p');
+                    const instructionText = initialStateAlert.querySelector('span');
                     instructionText.innerHTML = solutionText;
                     initialStateAlert.className = 'alert success';
                     
@@ -1005,18 +498,18 @@
                     document.getElementById('errorAlert').style.display = 'none';
                     console.log('Final solution:', solution);
                 } else {
-                    showError("No solution found for this configuration of statues. Please check your mappings.");
+                    showError("No solution found. Please verify your owl statue mapping and active statues.");
                 }
-            } catch (err) {
-                console.error('Solver error:', err);
-                showError("Error solving puzzle: " + err.message);
+            } catch (error) {
+                console.error('Error solving puzzle:', error);
+                showError("Error solving puzzle: " + error.message);
             }
         }
 
         function showError(message) {
             const errorAlert = document.getElementById('errorAlert');
             if (message && message.trim()) {
-                errorAlert.textContent = message;
+                errorAlert.querySelector('span').textContent = message;
                 errorAlert.style.display = 'block';
             } else {
                 errorAlert.style.display = 'none';
@@ -1056,15 +549,22 @@
             document.getElementById('errorAlert').style.display = 'none';
             document.getElementById('flipMapText').value = '';
             
-            // Reset instruction text and styling
+            // Reset all alerts
+            document.getElementById('configureAlert').style.display = 'block';
+            document.getElementById('settingFlipsAlert').style.display = 'none';
+            document.getElementById('initialStateAlert').style.display = 'none';
+            
+            // Reset instruction text
             const initialStateAlert = document.getElementById('initialStateAlert');
             initialStateAlert.className = 'alert';
-            initialStateAlert.querySelector('p').textContent = 'Now highlight the currently active owl statues on the grid (Not in-game)';
+            initialStateAlert.querySelector('span').textContent = 'Now highlight the currently active owl statues on the grid';
             
-            // Show solve button again
+            // Reset buttons
             document.getElementById('solveButton').style.display = 'block';
+            document.getElementById('nextStepButton').style.display = 'none';
             
             updateUI();
+            hideResetDialog();
         }
 
         function showFAQ() {
@@ -1110,7 +610,6 @@
         function handleNextStep() {
             showInitialStateSelection = true;
             updateUI();  // Make sure display is updated
-            document.getElementById('activeStatuesSection').style.display = 'block';
         }
 
         function toggleVisualMode() {
