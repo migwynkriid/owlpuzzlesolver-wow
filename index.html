@@ -198,7 +198,7 @@
     <div class="dialog-backdrop" id="dialogBackdrop"></div>
     <div id="resetDialog" class="dialog">
         <div class="dialog-content">
-            <p>Resetting this will CLEAR all of your mappings, not just the previously configured statue.<br>To reconfigure a single statue click on "Cancel" and click on the corresponding grid.</p>
+            <p></p>
             <div class="dialog-buttons">
                 <button id="confirmReset" class="button outline button-with-icon">
                     <img src="./pictures/x.png" alt="Reset" class="button-icon"> Reset All
@@ -252,7 +252,7 @@
 
             if (!isSettingFlips) {
                 if (flipMap[index + 1] && flipMap[index + 1].length > 0) {
-                    showResetDialog(index);
+                    showGridResetDialog(index);
                     return;
                 }
                 currentSquare = index;
@@ -524,9 +524,23 @@
             }
         }
 
-        function showResetDialog(index) {
+        function showResetDialog() {
             document.getElementById('dialogBackdrop').style.display = 'block';
             document.getElementById('resetDialog').style.display = 'block';
+            document.getElementById('resetDialog').querySelector('p').innerHTML = "Resetting this will CLEAR all of your mappings, not just the previously configured statue.<br>To reconfigure a single statue click on \"Cancel\" and click on the corresponding grid.";
+            const confirmButton = document.getElementById('confirmReset');
+            confirmButton.innerHTML = '<img src="./pictures/x.png" alt="Reset" class="button-icon"> Reset All';
+            document.getElementById('confirmReset').onclick = () => {
+                resetAll();
+            };
+        }
+
+        function showGridResetDialog(index) {
+            document.getElementById('dialogBackdrop').style.display = 'block';
+            document.getElementById('resetDialog').style.display = 'block';
+            document.getElementById('resetDialog').querySelector('p').innerHTML = "You have clicked on a mapped statue, would you like to reset it?";
+            const confirmButton = document.getElementById('confirmReset');
+            confirmButton.innerHTML = '<img src="./pictures/x.png" alt="Reset" class="button-icon"> Reset';
             document.getElementById('confirmReset').onclick = () => {
                 delete flipMap[index + 1];
                 currentSquare = index;
@@ -575,6 +589,27 @@
             hideResetDialog();
         }
 
+        document.getElementById('resetButton').onclick = () => {
+            showResetDialog();
+        };
+
+        function handleNextStep() {
+            showInitialStateSelection = true;
+            updateUI();  // Make sure display is updated
+        }
+
+        function toggleVisualMode() {
+            gridType = gridType === 'gridnumbers' ? 'gridpictures' : 'gridnumbers';
+            const squares = document.querySelectorAll('.square');
+            squares.forEach(square => {
+                square.classList.toggle('visual-mode');
+            });
+            
+            const visualButton = document.getElementById('placeholderBtn');
+            const newText = gridType === 'gridnumbers' ? 'Switch to Pictures' : 'Switch to Numbers';
+            visualButton.innerHTML = `<img src="./pictures/copy.png" alt="Switch" class="button-icon"> ${newText}`;
+        }
+
         function showFAQ() {
             document.getElementById('faqModal').style.display = 'block';
         }
@@ -615,34 +650,10 @@
             updateUI();
         }
 
-        function handleNextStep() {
-            showInitialStateSelection = true;
-            updateUI();  // Make sure display is updated
-        }
-
-        function toggleVisualMode() {
-            gridType = gridType === 'gridnumbers' ? 'gridpictures' : 'gridnumbers';
-            const squares = document.querySelectorAll('.square');
-            squares.forEach(square => {
-                square.classList.toggle('visual-mode');
-            });
-            
-            const visualButton = document.getElementById('placeholderBtn');
-            const newText = gridType === 'gridnumbers' ? 'Switch to Pictures' : 'Switch to Numbers';
-            visualButton.innerHTML = `<img src="./pictures/copy.png" alt="Switch" class="button-icon"> ${newText}`;
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('doneButton').onclick = handleDoneSettingFlips;
             document.getElementById('nextStepButton').onclick = handleNextStep;
             document.getElementById('solveButton').onclick = handleSolve;
-            document.getElementById('resetButton').onclick = () => {
-                document.getElementById('dialogBackdrop').style.display = 'block';
-                document.getElementById('resetDialog').style.display = 'block';
-                document.getElementById('confirmReset').onclick = () => {
-                    resetAll();
-                };
-            };
             document.getElementById('placeholderBtn').onclick = toggleVisualMode;
             document.getElementById('backButton').onclick = () => {
                 showInitialStateSelection = false;
