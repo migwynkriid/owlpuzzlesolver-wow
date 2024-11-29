@@ -661,6 +661,9 @@
                 updateUI();
             };
 
+            // Add click handler to backdrop to dismiss dialog when clicking outside
+            document.getElementById('dialogBackdrop').onclick = hideResetDialog;
+
             // Initialize the puzzle
             initializeGrid();
         });
