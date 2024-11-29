@@ -755,3 +755,9 @@ button:hover {
 #settingFlipsAlert .alert-content {
     padding: 0.25rem 0;
 }
+
+/* Solution text styling */
+#initialStateAlert strong {
+    font-weight: 900;
+    color: black;
+}
