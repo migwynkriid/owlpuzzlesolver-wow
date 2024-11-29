@@ -575,16 +575,13 @@ button:disabled {
 
 /* Mapping section styles */
 .mapping-section {
-    border: 1.25px solid #ccc;
-    border-radius: 4px;
-    padding: 10px;
+    padding: 0;
     margin: 10px 0;
     box-sizing: border-box;
 }
 
 .mapping-section p {
-    margin-top: 0;
-    margin-bottom: 10px;
+    margin: 0 0 10px 0;
 }
 
 .mapping-section textarea {
