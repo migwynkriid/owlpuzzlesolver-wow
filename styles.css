@@ -465,6 +465,48 @@ button:disabled {
     gap: 10px;
 }
 
+#confirmReset {
+    border: 1.25px solid #b92626;
+    color: #b92626;
+    background-color: transparent;
+}
+
+#confirmReset:hover {
+    background-color: #b92626;
+    color: white;
+    border-color: #b92626;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.dialog-buttons .button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dialog-buttons .button.outline {
+    background-color: transparent;
+    border: 1.25px solid #6b7280;
+    color: #6b7280;
+}
+
+.dialog-buttons .button.outline:hover {
+    background-color: #6b7280;
+    color: white;
+}
+
 /* Button styles */
 .button-with-icon {
     display: flex;
